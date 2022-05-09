@@ -4,4 +4,5 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . ./
 EXPOSE 8080
-ENTRYPOINT ["/bin/sh", "sleep" , "1000"]
+# ENTRYPOINT ["/bin/sh", "sleep" , "1000"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
