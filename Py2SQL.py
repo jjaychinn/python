@@ -51,6 +51,7 @@ cursor = connection.cursor()
 
 #new code
 farms = get_database("farm")
+print(farm)
 farms_param = get_database("plants_parameters")
 
 while True:
