@@ -30,7 +30,7 @@ def light_controlling(light_controller,current_time,opentime,closetime, mc):
 
 def physical_device_controlling(floor_controller,ceiling_controller,sensor_reading,ceiling_sensor,floor_sensor,mc):
     if(mc == 0):
-        if    ceiling_sensor < sensor_reading < floor_sensor: return [0,0]
+        if    ceiling_sensor <= sensor_reading <= floor_sensor: return [0,0]
         elif  sensor_reading < ceiling_sensor: return [0,1]
         elif  sensor_reading > floor_sensor  : return [1,0]
     else: return [floor_controller, ceiling_controller]
