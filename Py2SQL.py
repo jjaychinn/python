@@ -9,6 +9,12 @@ def get_database(TableName):
     cursor.execute(cmd)
     return cursor.fetchall()
 
+def get_comparing(farmname):
+    cmd = "SELECT * FROM farm_controller where iot_farmname = '%s';" %(farmname)
+    #print(cmd)
+    cursor.execute(cmd)
+    return cursor.fetchone()
+
 def fetch_devices(farmname,devices):
     cmd = "SELECT * FROM %s WHERE iot_farmname = '%s' ORDER BY iot_datetime DESC LIMIT 1;" % (devices,farmname)
     cursor.execute(cmd)
@@ -17,7 +23,7 @@ def fetch_devices(farmname,devices):
 def update_devices(TableName,controller_statuses,farmname):
     commands = (TableName,) + ('iot_datetime', 'CURRENT_TIMESTAMP',) + controller_statuses + (farmname,)
     cmd = "UPDATE %s SET %s = %s, %s = %d, %s = %d, %s = %d, %s = %d, %s = %d, %s = %d WHERE iot_farmname = '%s' " %commands
-    print(cmd)
+    #print(cmd)
     cursor.execute(cmd)
     #return cursor.fetchall()
 
@@ -46,12 +52,14 @@ def controller_log_save(farmname,controllers_name,controls_status):
     cursor.execute(cmd)
 
 #database connection
-connection = sql.connect(host = '139.162.39.94', user = 'root',password = 'root',database = 'smartfarm')
+#connection = sql.connect(host = 'localhost', user = 'root',database = 'smartfarm')
+connection = sql.connect(host = '139.162.39.94', user = 'root',password = 'root' ,database = 'smartfarm')
 cursor = connection.cursor()
 
 #new code
+
+
 farms = get_database("farm")
-print(farms)
 farms_param = get_database("plants_parameters")
 
 while True:
@@ -64,6 +72,10 @@ while True:
 
             controllers_val = fetch_devices(farm_name,"farm_controller")
             (light_MC, temp_MC, humid_MC, pH_MC, light, fan, heatlight, fog, phhigh, phlow) = controllers_val[0][2:-1]
+            
+            # print(sensors_val)
+            # print(controllers_val)
+            # print(farm_name,farm_plant,farm_stage)
 
             for farm_param in farms_param:
                 if (farm_param[1],farm_param[2]) == (farm_plant,farm_stage):
@@ -77,12 +89,17 @@ while True:
             # controller_name = [i for i in controller_statuses if controller_statuses.index(i)%2 == 0]
             # controls_status = [i for i in controller_statuses if controller_statuses.index(i)%2 == 1]
             # controller_log_save(farm_name,controller_name,controls_status)
-            update_devices("farm_controller",controller_statuses,farm_name)
-        except (IndexError, sql.err.OperationalError):
-            print("Error")
+            prev_stat = get_comparing(farm_name)[6:-1]
+            curr_stat = (light_control,fan_control,heatlight_control,fog_control,base_control,acid_control)
+            print(prev_stat, curr_stat, sep=' -> ', end=' ')
+            if prev_stat != curr_stat:
+                update_devices("farm_controller",controller_statuses,farm_name)
+                print("Controller got update!!")
+            else: print(" ")
+        except (IndexError, sql.err.OperationalError): break
     
     time_now = time.asctime( time.localtime(time.time()) )
-    print("script execution completed, timestamp : %s" %(time_now))
+    #print("Controller script execution complete, timestamp : %s" %(time_now))
     
 
     connection.commit()
