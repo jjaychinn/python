@@ -47,7 +47,7 @@ def controller_log_save(farmname,controllers_name,controls_status):
     cursor.execute(cmd)
 
 #database connection
-connection = sql.connect(host = 'localhost', user = 'root', password = 'root', database = 'smartfarm')
+connection = sql.connect(host = '139.162.39.94', user = 'root', password = 'root', database = 'smartfarm')
 cursor = connection.cursor()
 
 #primary fetch
