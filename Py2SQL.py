@@ -1,9 +1,10 @@
-#import things
+#library import
 from datetime import timedelta
 from multiprocessing.dummy import connection
 import pymysql as sql
 import time
 
+#defined function
 def get_database(TableName):
     cmd = "SELECT * FROM %s;" %(TableName)
     cursor.execute(cmd)
@@ -25,7 +26,6 @@ def update_devices(TableName,controller_statuses,farmname):
     cmd = "UPDATE %s SET %s = %s, %s = %d, %s = %d, %s = %d, %s = %d, %s = %d, %s = %d WHERE iot_farmname = '%s' " %commands
     #print(cmd)
     cursor.execute(cmd)
-    #return cursor.fetchall()
 
 def light_controlling(light_controller,current_time,opentime,closetime, mc):
     if(mc == 0):
@@ -40,11 +40,6 @@ def physical_device_controlling(floor_controller,ceiling_controller,sensor_readi
         elif  sensor_reading < ceiling_sensor: return [0,1]
         elif  sensor_reading > floor_sensor  : return [1,0]
     else: return [floor_controller, ceiling_controller]
-    #case humid : floor control is foggy, ceiling control is fan
-    #case ph    : floor control is base,  ceiling control is acid
-    #case temp  : floor control is heatlight,   ceiling control is fan
-    #floor control means if the sensor goes down the floor value, that controller will help bring value up
-    #ceiling control means the same but in vice versa
     
 def controller_log_save(farmname,controllers_name,controls_status):
     cmd = "INSERT INTO %s_controller_log (%s) VALUES (%s)" %(farmname,','.join(controllers_name),','.join(str(stat) for stat in controls_status))
@@ -52,13 +47,10 @@ def controller_log_save(farmname,controllers_name,controls_status):
     cursor.execute(cmd)
 
 #database connection
-#connection = sql.connect(host = 'localhost', user = 'root',database = 'smartfarm')
-connection = sql.connect(host = '139.162.39.94', user = 'root',password = 'root' ,database = 'smartfarm')
+connection = sql.connect(host = 'localhost', user = 'root',database = 'smartfarm')
 cursor = connection.cursor()
 
-#new code
-
-
+#primary fetch
 farms = get_database("farm")
 farms_param = get_database("plants_parameters")
 
@@ -72,10 +64,6 @@ while True:
 
             controllers_val = fetch_devices(farm_name,"farm_controller")
             (light_MC, temp_MC, humid_MC, pH_MC, light, fan, heatlight, fog, phhigh, phlow) = controllers_val[0][2:-1]
-            
-            # print(sensors_val)
-            # print(controllers_val)
-            # print(farm_name,farm_plant,farm_stage)
 
             for farm_param in farms_param:
                 if (farm_param[1],farm_param[2]) == (farm_plant,farm_stage):
@@ -99,9 +87,7 @@ while True:
         except (IndexError, sql.err.OperationalError): break
     
     time_now = time.asctime( time.localtime(time.time()) )
-    #print("Controller script execution complete, timestamp : %s" %(time_now))
     
-
     connection.commit()
     time.sleep(2)
     
