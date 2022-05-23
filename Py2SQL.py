@@ -79,11 +79,10 @@ while True:
             # controller_log_save(farm_name,controller_name,controls_status)
             prev_stat = get_comparing(farm_name)[6:-1]
             curr_stat = (light_control,fan_control,heatlight_control,fog_control,base_control,acid_control)
-            print(prev_stat, curr_stat, sep=' -> ', end=' ')
             if prev_stat != curr_stat:
                 update_devices("farm_controller",controller_statuses,farm_name)
+                print(prev_stat, curr_stat, sep=' -> ', end=' ')
                 print("Controller got update!!")
-            else: print(" ")
         except (IndexError, sql.err.OperationalError): break
     
     time_now = time.asctime( time.localtime(time.time()) )
