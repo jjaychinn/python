@@ -74,7 +74,7 @@ while True:
             (base_control, acid_control) = physical_device_controlling(phhigh,phlow,iot_ph,ceiling_ph,floor_ph,pH_MC)
             (heatlight_control, temp_fan_control) = physical_device_controlling(heatlight,fan,iot_temp,ceiling_temp,floor_temp,temp_MC)
             light_control = light_controlling(light,sensor_time,opentime,closetime,light_MC)
-            controller_statuses = ('fog',fog_control,'phhigh',base_control,'phlow', acid_control,'heatlight', heatlight_control,'fan', temp_fan_control,'light', light_control)
+            controller_statuses = ('fog',fog_control,'phhigh',base_control,'phlow', acid_control,'heatlight', heatlight_control,'fan', fan_control,'light', light_control)
             # controller_name = [i for i in controller_statuses if controller_statuses.index(i)%2 == 0]
             # controls_status = [i for i in controller_statuses if controller_statuses.index(i)%2 == 1]
             # controller_log_save(farm_name,controller_name,controls_status)
