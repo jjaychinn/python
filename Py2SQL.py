@@ -84,7 +84,7 @@ while True:
                 update_devices("farm_controller",controller_statuses,farm_name)
                 print(prev_stat, curr_stat, sep=' -> ', end=' ')
                 print("Controller got update!!")
-        except (IndexError, sql.err.OperationalError): break
+        except (IndexError, sql.err.OperationalError): continue
     
     time_now = time.asctime( time.localtime(time.time()) )
     
